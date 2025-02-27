@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:rekruters/Screens/Loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
+
   @override
   State<Dashboard> createState() => _DashboardState();
 }
+Future<String?> _getUserName() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('userName');
+}
+
 
 class _DashboardState extends State<Dashboard> {
+  String? userName;
+
+  Future<void> _loadUserName() async {
+    String? name = await _getUserName();
+    setState(() {
+      userName = name;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Curved AppBar with Logo and Login Button
             Container(
               decoration: BoxDecoration(
                 color: Color.fromRGBO(189, 217, 255, 1),
@@ -39,37 +60,42 @@ class _DashboardState extends State<Dashboard> {
                         fit: BoxFit.contain,
                       ),
                       // Login button on the right side
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CandidateLoginScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700, // A richer blue color
-                          foregroundColor: Colors.white, // White text for contrast
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Better padding
-                          elevation: 5, // Adds slight shadow for depth
-                        ),
-                        child: Text(
-                          'Login',
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      )
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => CandidateLoginScreen()),
+                      //     );
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: Colors.blue.shade700,
+                      //     // A richer blue color
+                      //     foregroundColor: Colors.white,
+                      //     // White text for contrast
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(20),
+                      //     ),
+                      //     padding: EdgeInsets.symmetric(
+                      //         vertical: 12, horizontal: 24),
+                      //     // Better padding
+                      //     elevation: 5, // Adds slight shadow for depth
+                      //   ),
+                      //   child: Text(
+                      //     'Login',
+                      //     style: GoogleFonts.poppins(
+                      //       fontSize: 13,
+                      //       fontWeight: FontWeight.w600,
+                      //       letterSpacing: 1.2,
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                   SizedBox(height: 10),
                   // Greeting Text
                   Text(
-                    'Hey, Aditya',
+                    'Hey, ${userName ?? 'User'}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -134,9 +160,9 @@ class _DashboardState extends State<Dashboard> {
                 child: Text(
                   'We are Provide',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black
                   ),
                 ),
               ),
@@ -149,12 +175,23 @@ class _DashboardState extends State<Dashboard> {
               mainAxisSpacing: 10,
               childAspectRatio: 1.1,
               children: [
-                _buildCategoryCard(context, 'Practice', 'assets/Images/practice.png', Color(0xFFFFE4B5)), // Light Orange
-                _buildCategoryCard(context, 'Jobs', 'assets/Images/job.png', Color(0xFFDFFFD6)), // Light Green
-                _buildCategoryCard(context, 'Internship', 'assets/Images/intern.png', Color(0xFFF5D0C5)), // Light Pink
-                _buildCategoryCard(context, 'Compete', 'assets/Images/enterpre.png', Color(0xFFD6E4FF)), // Light Blue
-                _buildCategoryCard(context, 'Mentorship', 'assets/Images/mentor.png', Color(0xFFFFF2CC)), // Light Yellow
-                _buildCategoryCard(context, 'Entrepreneurship', 'assets/Images/enterpre.png', Color(0xFFE8D9F1)), // Light Purple
+                _buildCategoryCard(
+                    context, 'Practice', 'assets/Images/practice.png',
+                    Color(0xFFFFE4B5)), // Light Orange
+                _buildCategoryCard(context, 'Jobs', 'assets/Images/job.png',
+                    Color(0xFFDFFFD6)), // Light Green
+                _buildCategoryCard(
+                    context, 'Internship', 'assets/Images/intern.png',
+                    Color(0xFFF5D0C5)), // Light Pink
+                _buildCategoryCard(
+                    context, 'Compete', 'assets/Images/compete.png',
+                    Color(0xFFD6E4FF)), // Light Blue
+                _buildCategoryCard(
+                    context, 'Mentorship', 'assets/Images/mentor.png',
+                    Color(0xFFFFF2CC)), // Light Yellow
+                _buildCategoryCard(
+                    context, 'Entrepreneurship', 'assets/Images/enterpre.png',
+                    Color(0xFFE8D9F1)), // Light Purple
               ],
             ),
             SizedBox(height: 20),
@@ -171,15 +208,20 @@ class _DashboardState extends State<Dashboard> {
             ),
             SizedBox(height: 20),
             SizedBox(
-              height: 180, // Adjust height for images
+              height: 150,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildOfferCard('Cultural Events and Conferences', 'assets/Images/corporate-college-quiz.jpg'),
-                  _buildOfferCard('Mentorships', 'assets/Images/mentorships.png'),
-                  _buildOfferCard('Scholarships', 'assets/Images/scholarships.jpg'),
-                  _buildOfferCard('Start-up Support', 'assets/Images/start-up-support.jpg'),
-                  _buildOfferCard('Advanced Salary', 'assets/Images/advance-salary.jpeg'),
+                  _buildOfferCard('Cultural Events and Conferences',
+                      'assets/Images/corporate-college-quiz.jpg'),
+                  _buildOfferCard(
+                      'Mentorships', 'assets/Images/mentorships.png'),
+                  _buildOfferCard(
+                      'Scholarships', 'assets/Images/scholarships.jpg'),
+                  _buildOfferCard(
+                      'Start-up Support', 'assets/Images/start-up-support.jpg'),
+                  _buildOfferCard(
+                      'Advanced Salary', 'assets/Images/advance-salary.jpeg'),
                 ],
               ),
             ),
@@ -202,66 +244,55 @@ class _DashboardState extends State<Dashboard> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _buildHorizontalImageCardWithText('assets/Images/corporate-college-quiz.jpg', 'Corporate Quiz'),
-                  _buildHorizontalImageCardWithText('assets/Images/mentorships.png', 'Mentorship Programs'),
+                  _buildHorizontalImageCardWithText(
+                      'assets/Images/corporate-college-quiz.jpg',
+                      'Corporate Quiz'),
+                  _buildHorizontalImageCardWithText(
+                      'assets/Images/mentorships.png', 'Mentorship Programs'),
+                  _buildHorizontalImageCardWithText(
+                      'assets/Images/skills.jpg', 'Skills'),
+
                   // _buildHorizontalImageCardWithText('assets/Images/project-financing.jpg', 'Projects'),
 
                 ],
               ),
             ),
 
-        ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOfferCard(String title, String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Stack(
-          children: [
-            Image.asset(
-              imagePath,
-              width: 200, // Adjust width as needed
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-            Container(
-              width: 200,
-              height: 180,
-              alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.7), Colors.transparent],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildOfferCard(String title, String imagePath) {
+    return _buildStandardCard(title, imagePath);
+  }
+
   Widget _buildHorizontalImageCardWithText(String imagePath, String text) {
+    return _buildStandardCard(text, imagePath);
+  }
+
+  Widget _buildCategoryCard(BuildContext context, String title,
+      String imagePath, Color bgColor) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailScreen(title: title)),
+        );
+      },
+      child: _buildStandardCard(title, imagePath, bgColor: bgColor),
+    );
+  }
+
+  Widget _buildStandardCard(String title, String imagePath, {Color? bgColor}) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8),
-      width: 150,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      width: 200,
+      height: 180,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
+        color: bgColor ?? Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -276,71 +307,33 @@ class _DashboardState extends State<Dashboard> {
             borderRadius: BorderRadius.circular(15),
             child: Image.asset(
               imagePath,
+              width: 200,
+              height: 180,
               fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
             ),
           ),
           Container(
+            width: 200,
+            height: 180,
             alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.black.withOpacity(0.5),
+              gradient: LinearGradient(
+                colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+              ),
             ),
             child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
+              title,
+              style: const TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryCard(BuildContext context, String title, String imagePath, Color bgColor) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DetailScreen(title: title)),
-        );
-      },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: 5,
-        color: bgColor,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
