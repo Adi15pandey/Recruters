@@ -16,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = const [
     Dashboard(),
-    Jobscreen(), // Placeholder for Jobs screen
-    User(), // Placeholder for User screen
+    Jobscreen(),
+    User(),
   ];
 
   void _onItemTapped(int index) {
