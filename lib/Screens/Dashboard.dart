@@ -3,6 +3,7 @@ import 'package:rekruters/Screens/Loginscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async'; // Import Timer
+import 'package:url_launcher/url_launcher.dart';
 
 
 class Dashboard extends StatefulWidget {
@@ -270,30 +271,31 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 _buildCategoryCard(
                     context, 'Practice', 'assets/Images/practice.png',
-                    Color(0xFFFFE4B5), 'Sharpen Your Skills'),
-                // Light Orange
+                    Color(0xFFFFE4B5), 'Sharpen Your Skills',
+                    'https://rekruters.com/Practice.aspx'),
                 _buildCategoryCard(
                     context, 'Job Opportunities', 'assets/Images/job.png',
-                    Color(0xFFDFFFD6), 'Find Your Dream Job'),
-                // Light Green
+                    Color(0xFFDFFFD6), 'Find Your Dream Job',
+                    'https://rekruters.com/Jobs.aspx'),
                 _buildCategoryCard(
                     context, 'Internships', 'assets/Images/intern.png',
-                    Color(0xFFF5D0C5), 'Gain Real-World Experience'),
-                // Light Pink
+                    Color(0xFFF5D0C5), 'Gain Real-World Experience',
+                    'https://rekruters.com/Internship.aspx'),
                 _buildCategoryCard(
                     context, 'Competitions', 'assets/Images/compete.png',
-                    Color(0xFFD6E4FF), 'Test Your Abilities'),
-                // Light Blue
+                    Color(0xFFD6E4FF), 'Test Your Abilities',
+                    'https://rekruters.com/Compete.aspx'),
                 _buildCategoryCard(
                     context, 'Mentorship', 'assets/Images/mentor.png',
-                    Color(0xFFFFF2CC), 'Learn from the Best'),
-                // Light Yellow
+                    Color(0xFFFFF2CC), 'Learn from the Best',
+                    'https://rekruters.com/Mentorship.aspx'),
                 _buildCategoryCard(
                     context, 'Entrepreneurship', 'assets/Images/enterpre.png',
-                    Color(0xFFE8D9F1), 'Turn Ideas into Reality'),
-                // Light Purple
+                    Color(0xFFE8D9F1), 'Turn Ideas into Reality',
+                    'https://rekruters.com/Entrepreneurship.aspx'),
               ],
             ),
+
 
             SizedBox(height: 20),
             Padding(
@@ -461,33 +463,46 @@ class _DashboardState extends State<Dashboard> {
   }
 
 
-  Widget _buildCategoryCard(BuildContext context, String title,
-      String imagePath, Color bgColor, String subtitle) {
-    return Container(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(imagePath, height: 60),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-                fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
-          ),
-        ],
+  Widget _buildCategoryCard(BuildContext context, String title, String imagePath, Color bgColor, String subtitle, String url) {
+    return GestureDetector(
+      onTap: () async {
+        final Uri _url = Uri.parse(url.toString());launchUrl(_url);
+        final Uri uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Could not open $title')),
+          // );
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(imagePath, height: 60),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
 
   Widget _buildStandardCard(String title, String imagePath, {Color? bgColor}) {
